@@ -14,7 +14,7 @@
             --primary-light: #fdf2eb;     /* 暖橘淡背景 */
             --renyu-color: #4a7c59;       /* 仁宇：常青樹綠 */
             --maozi-color: #e28743;       /* 毛子：秋楓橘 */
-            --card-color: #5b8296;        /* 公用卡：莫蘭迪藍 */
+            --card-color: #5b8296;        /* 家庭帳戶金融卡：莫蘭迪藍 */
             --success-color: #2b8a3e;     /* 已核銷綠 */
             --border: #e2ede4;            /* 淺綠邊框 */
         }
@@ -409,8 +409,8 @@
                     <input type="radio" id="payByMaozi" name="payer" value="毛子代墊">
                     <label for="payByMaozi" class="radio-label mz-btn">🍊 毛子代墊</label>
 
-                    <input type="radio" id="payByCard" name="payer" value="公用卡直刷">
-                    <label for="payByCard" class="radio-label cd-btn">💳 公用卡</label>
+                    <input type="radio" id="payByCard" name="payer" value="家庭帳戶金融卡直刷">
+                    <label for="payByCard" class="radio-label cd-btn">💳 家庭帳戶金融卡</label>
                 </div>
             </div>
 
@@ -519,7 +519,7 @@
                     badgeClass = 'mz';
                     if (!isSettled) mzUnpaid += res.amount;
                 } else {
-                    displayPayer = '公用卡直刷';
+                    displayPayer = '家庭帳戶金融卡直刷';
                     badgeClass = 'cd';
                 }
 
@@ -528,7 +528,7 @@
                 
                 // 處理右側核銷稽核按鈕/狀態的 HTML
                 let auditHtml = '';
-                if (displayPayer === '公用卡直刷') {
+                if (displayPayer === '家庭帳戶金融卡直刷') {
                     auditHtml = `<span class="status-none">💳 無需撥款</span>`;
                 } else if (isSettled) {
                     auditHtml = `<span class="status-settled">✓ 已撥款<span class="pay-date-text">📅 ${res.payDate || '已完成'}</span></span>`;
