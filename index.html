@@ -378,7 +378,7 @@
         <div class="total-box">
             <div class="total-label">⚖️ 家庭基金剩餘可用</div>
             <div class="total-amount">NT$ <span id="fundBalance">0</span></div>
-            <div class="fund-info" id="fundInfoText">本月基金總額: NT$ --</div>
+            <div class="fund-info" id="fundInfoText">本月已花了: NT$ 0</div>
         </div>
         <div class="split-grid">
             <div class="split-col">
@@ -465,8 +465,7 @@
             if (year > 2026 || (year === 2026 && month >= 6)) {
                 return { total: 20900, text: "6月新制 (13,200 + 7,700)" };
             } else {
-                // 🛠️ 精準修正：將五月基底調整為 857 元，確保無開銷時完美顯示 857
-                return { total: 857, text: "5月舊制 (餘額調整版)" };
+                return { total: 857, text: "5月舊制" };
             }
         }
 
@@ -563,12 +562,8 @@
             // 顯示至看板
             document.getElementById('fundBalance').innerText = remainingBalance.toLocaleString();
             
-            // 修正顯示文字
-            if (budgetInfo.total === 857) {
-                document.getElementById('fundInfoText').innerText = `本月剩餘鎖定額度 (修正目標：857)`;
-            } else {
-                document.getElementById('fundInfoText').innerText = `本月基金配額: NT$ ${budgetInfo.total.toLocaleString()} (${budgetInfo.text})`;
-            }
+            // 🛠️ 核心修改：將原本的提示文字精準改為「本月已花了」的加總統計
+            document.getElementById('fundInfoText').innerText = `本月已花了: NT$ ${totalSpent.toLocaleString()}`;
             
             document.getElementById('renyuRefund').innerText = 'NT$ ' + ryUnpaid.toLocaleString();
             document.getElementById('maoziRefund').innerText = 'NT$ ' + mzUnpaid.toLocaleString();
@@ -606,6 +601,7 @@
                 if(result.result === "success") {
                     const recordIndex = records.findIndex(r => r.rowId === rowId);
                     if(recordIndex !== -1) {
+                        records[recordIndex].status = "專用卡已撥款"; 
                         records[recordIndex].status = "已撥款";
                         records[recordIndex].payDate = result.payDate;
                     }
