@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>毛毛宇家的金庫2.0</title>
+    <title>毛毛宇家的金庫3.5</title>
     <style>
         :root {
             --bg-color: #f4f6f4;          /* 淡淡的森林大地灰綠 */
@@ -14,6 +14,8 @@
             --primary-light: #fdf2eb;     /* 暖橘淡背景 */
             --renyu-color: #4a7c59;       /* 仁宇：常青樹綠 */
             --maozi-color: #e28743;       /* 毛子：秋楓橘 */
+            --card-color: #5b8296;        /* 公用卡：莫蘭迪藍 */
+            --success-color: #2b8a3e;     /* 已核銷綠 */
             --border: #e2ede4;            /* 淺綠邊框 */
         }
 
@@ -34,7 +36,7 @@
 
         header {
             text-align: center;
-            padding: 24px 0 24px 0;
+            padding: 24px 0;
         }
 
         header h1 {
@@ -80,6 +82,12 @@
             margin-top: 4px;
         }
 
+        .fund-info {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
         .split-grid {
             display: table;
             width: 100%;
@@ -97,7 +105,7 @@
         }
 
         .member-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             margin-bottom: 4px;
         }
@@ -108,6 +116,12 @@
         .member-amount {
             font-size: 18px;
             font-weight: bold;
+        }
+        
+        .member-subnote {
+            font-size: 10px;
+            color: var(--text-sub);
+            margin-top: 2px;
         }
 
         .settlement-alert {
@@ -171,30 +185,27 @@
         }
 
         .radio-group {
-            display: table;
+            display: flex;
             width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         .radio-label {
-            display: table-cell;
-            width: 50%;
+            flex: 1;
             text-align: center;
-            padding: 12px;
-            border: 1px solid var(--border);
+            padding: 12px 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             background: #fff;
             font-weight: 500;
             transition: all 0.2s;
-        }
-
-        .radio-label:first-child {
-            border-radius: 8px 0 0 8px;
-            border-right: none;
+            border-right: 1px solid var(--border);
         }
 
         .radio-label:last-child {
-            border-radius: 0 8px 8px 0;
+            border-right: none;
         }
 
         input[type="radio"] {
@@ -213,9 +224,15 @@
             border-color: var(--maozi-color);
         }
 
+        input[type="radio"]:checked + .radio-label.cd-btn {
+            background-color: var(--card-color);
+            color: white;
+            border-color: var(--card-color);
+        }
+
         .btn-submit {
             width: 100%;
-            background-color: var(--renyu-color); /* 預設使用常青綠按鈕 */
+            background-color: var(--renyu-color); 
             color: white;
             border: none;
             padding: 14px;
@@ -263,6 +280,11 @@
             font-size: 14px;
             font-weight: 500;
         }
+        
+        .item-title.strikethrough {
+            text-decoration: line-through;
+            color: var(--text-sub);
+        }
 
         .item-meta {
             font-size: 11px;
@@ -282,14 +304,59 @@
 
         .item-badge.ry { background-color: var(--renyu-color); }
         .item-badge.mz { background-color: var(--maozi-color); }
+        .item-badge.cd { background-color: var(--card-color); }
 
-        .item-amount {
+        .item-right {
             display: table-cell;
             text-align: right;
             vertical-align: middle;
+            width: 110px;
+        }
+
+        .item-amount {
             font-weight: bold;
             font-size: 15px;
             color: var(--text-main);
+            margin-bottom: 4px;
+        }
+        
+        /* 審核按鈕樣式 */
+        .btn-audit {
+            background-color: #f1f3f1;
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-audit:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .status-settled {
+            color: var(--success-color);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 0;
+        }
+        
+        .pay-date-text {
+            display: block;
+            font-size: 9px;
+            color: #889c89;
+            font-weight: normal;
+            margin-top: 1px;
+        }
+        
+        .status-none {
+            color: #90a4ae;
+            font-size: 11px;
+            font-style: italic;
         }
         
         .loading-text {
@@ -303,23 +370,26 @@
 <body>
 
     <header>
-        <h1>🌲 毛毛宇家的金庫2.0</h1>
-        <p>一起堅固我們家</p>
+        <h1>🌲 毛毛宇家的金庫3.5</h1>
+        <p>一起堅固我們家（核銷稽核版）</p>
     </header>
 
     <div class="dashboard">
         <div class="total-box">
-            <div class="total-label">本月共同總支出</div>
-            <div class="total-amount">NT$ <span id="totalExpenses">0</span></div>
+            <div class="total-label">⚖️ 家庭基金剩餘可用</div>
+            <div class="total-amount">NT$ <span id="fundBalance">0</span></div>
+            <div class="fund-info" id="fundInfoText">本月基金總額: NT$ --</div>
         </div>
         <div class="split-grid">
             <div class="split-col">
-                <div class="member-name renyu">仁宇已墊付</div>
-                <div class="member-amount" id="renyuPaid">NT$ 0</div>
+                <div class="member-name renyu">🌲 未結算補款 (仁宇)</div>
+                <div class="member-amount" id="renyuRefund">NT$ 0</div>
+                <div class="member-subnote">已扣除已撥款項</div>
             </div>
             <div class="split-col">
-                <div class="member-name maozi">毛子已墊付</div>
-                <div class="member-amount" id="maoziPaid">NT$ 0</div>
+                <div class="member-name maozi">🍊 未結算補款 (毛子)</div>
+                <div class="member-amount" id="maoziRefund">NT$ 0</div>
+                <div class="member-subnote">已扣除已撥款項</div>
             </div>
         </div>
         <div class="settlement-alert" id="settlementText">
@@ -331,13 +401,16 @@
         <div class="card-title">新增花費</div>
         <form id="expenseForm">
             <div class="form-group">
-                <label>付款人</label>
+                <label>付款方式</label>
                 <div class="radio-group">
-                    <input type="radio" id="payByRenyu" name="payer" value="仁宇" checked>
-                    <label for="payByRenyu" class="radio-label ry-btn">仁宇</label>
+                    <input type="radio" id="payByRenyu" name="payer" value="仁宇代墊" checked>
+                    <label for="payByRenyu" class="radio-label ry-btn">🌲 仁宇代墊</label>
                     
-                    <input type="radio" id="payByMaozi" name="payer" value="毛子">
-                    <label for="payByMaozi" class="radio-label mz-btn">毛子</label>
+                    <input type="radio" id="payByMaozi" name="payer" value="毛子代墊">
+                    <label for="payByMaozi" class="radio-label mz-btn">🍊 毛子代墊</label>
+
+                    <input type="radio" id="payByCard" name="payer" value="公用卡直刷">
+                    <label for="payByCard" class="radio-label cd-btn">💳 公用卡</label>
                 </div>
             </div>
 
@@ -356,32 +429,45 @@
     </div>
 
     <div class="card">
-        <div class="card-title">最近記帳明細</div>
+        <div class="card-title">最近記帳明細 (點擊核銷可立即發錢)</div>
         <ul class="history-list" id="historyList">
             <div class="loading-text" id="loadingText">正在讀取最新帳目...</div>
         </ul>
     </div>
 
     <script>
-        // 專屬 GAS 連線 API 網址
+        // 專屬 GAS 連線 API 網址 (請填入你最新部署的 GAS 網址)
         const API_URL = "https://script.google.com/macros/s/AKfycbwaTVZsxtJ_fUpM1Em624hvAEgvtrt0jgIjngZWPRqmKUYcnZ28McNPXA3OZoJdW64g/exec";
         
         let records = [];
         const form = document.getElementById('expenseForm');
         const submitBtn = document.getElementById('submitBtn');
 
-        // 動態微調送出按鈕顏色的視覺小彩蛋
+        // 按鈕視覺顏色切換
         document.querySelectorAll('input[name="payer"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
-                if(e.target.value === '仁宇') {
+                if(e.target.value === '仁宇代墊') {
                     submitBtn.style.backgroundColor = 'var(--renyu-color)';
-                    submitBtn.style.boxShadow = '0 4px 12px rgba(74, 124, 89, 0.15)';
-                } else {
+                } else if(e.target.value === '毛子代墊') {
                     submitBtn.style.backgroundColor = 'var(--maozi-color)';
-                    submitBtn.style.boxShadow = '0 4px 12px rgba(226, 135, 67, 0.15)';
+                } else {
+                    submitBtn.style.backgroundColor = 'var(--card-color)';
                 }
             });
         });
+
+        // 動態計算當月理財基金總額
+        function getBudgetForCurrentMonth() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+
+            if (year > 2026 || (year === 2026 && month >= 6)) {
+                return { total: 20900, text: "6月新制 (13,200 + 7,700)" };
+            } else {
+                return { total: 17500, text: "5月舊制 (11,500 + 6,000)" };
+            }
+        }
 
         function fetchCloudData() {
             if(API_URL === "" || API_URL.includes("這裡替換成")) {
@@ -404,9 +490,9 @@
         }
         
         function updateUI() {
-            let total = 0;
-            let ryTotal = 0;
-            let mzTotal = 0;
+            let totalSpent = 0;   // 基金總花費 (不論是否撥款)
+            let ryUnpaid = 0;     // 仁宇「尚未被撥款」的代墊款
+            let mzUnpaid = 0;     // 毛子「尚未被撥款」的代墊款
             
             const listElement = document.getElementById('historyList');
             listElement.innerHTML = '';
@@ -416,44 +502,123 @@
             }
 
             records.forEach(res => {
-                total += res.amount;
-                if(res.payer === '仁宇') ryTotal += res.amount;
-                if(res.payer === '毛子') mzTotal += res.amount;
+                let displayPayer = res.payer;
+                let badgeClass = 'cd';
+                let isSettled = res.status === '已撥款';
+
+                // 計算開銷
+                totalSpent += res.amount;
+
+                // 只有「未撥款」的墊付才會出現在上方的「應補款金額」看板中
+                if(res.payer === '仁宇代墊' || res.payer === '仁宇' || res.payer === '老公') {
+                    displayPayer = '仁宇代墊';
+                    badgeClass = 'ry';
+                    if (!isSettled) ryUnpaid += res.amount;
+                } else if(res.payer === '毛子代墊' || res.payer === '毛子' || res.payer === '老婆') {
+                    displayPayer = '毛子代墊';
+                    badgeClass = 'mz';
+                    if (!isSettled) mzUnpaid += res.amount;
+                } else {
+                    displayPayer = '公用卡直刷';
+                    badgeClass = 'cd';
+                }
 
                 const li = document.createElement('li');
                 li.className = 'history-item';
-                const badgeClass = res.payer === '仁宇' ? 'ry' : 'mz';
                 
+                // 處理右側核銷稽核按鈕/狀態的 HTML
+                let auditHtml = '';
+                if (displayPayer === '公用卡直刷') {
+                    auditHtml = `<span class="status-none">💳 無需撥款</span>`;
+                } else if (isSettled) {
+                    auditHtml = `<span class="status-settled">✓ 已撥款<span class="pay-date-text">📅 ${res.payDate || '已完成'}</span></span>`;
+                } else {
+                    auditHtml = `<button class="btn-audit" onclick="auditRow(${res.rowId}, this)">⚙ 點擊撥款</button>`;
+                }
+
+                // 如果已經核銷撥款，字體加上刪除線淡化
+                const titleClass = isSettled ? "item-title strikethrough" : "item-title";
+
                 li.innerHTML = `
                     <div class="item-main">
-                        <div class="item-title">${res.purpose}</div>
+                        <div class="item-title ${titleClass}">${res.purpose}</div>
                         <div class="item-meta">
-                            <span class="item-badge ${badgeClass}">${res.payer}</span>
+                            <span class="item-badge ${badgeClass}">${displayPayer}</span>
+                            <span style="color:#a0b2a1;">${res.time}</span>
                         </div>
                     </div>
-                    <div class="item-amount">NT$ ${res.amount.toLocaleString()}</div>
+                    <div class="item-right">
+                        <div class="item-amount">NT$ ${res.amount.toLocaleString()}</div>
+                        <div class="audit-zone">${auditHtml}</div>
+                    </div>
                 `;
                 listElement.appendChild(li);
             });
 
-            document.getElementById('totalExpenses').innerText = total.toLocaleString();
-            document.getElementById('renyuPaid').innerText = 'NT$ ' + ryTotal.toLocaleString();
-            document.getElementById('maoziPaid').innerText = 'NT$ ' + mzTotal.toLocaleString();
+            // 算預算
+            const budgetInfo = getBudgetForCurrentMonth();
+            const remainingBalance = budgetInfo.total - totalSpent;
+
+            // 顯示至看板
+            document.getElementById('fundBalance').innerText = remainingBalance.toLocaleString();
+            document.getElementById('fundInfoText').innerText = `本月基金配額: NT$ ${budgetInfo.total.toLocaleString()} (${budgetInfo.text})`;
+            document.getElementById('renyuRefund').innerText = 'NT$ ' + ryUnpaid.toLocaleString();
+            document.getElementById('maoziRefund').innerText = 'NT$ ' + mzUnpaid.toLocaleString();
 
             const settlementAlert = document.getElementById('settlementText');
-            const half = total / 2;
-            
-            if (ryTotal === mzTotal) {
-                settlementAlert.innerText = '✨ 雙方金額對等，平穩過日子！';
-            } else if (ryTotal > mzTotal) {
-                const diff = ryTotal - half;
-                settlementAlert.innerText = `💡 毛子應給 仁宇 NT$ ${Math.round(diff).toLocaleString()}`;
+            if (remainingBalance < 0) {
+                settlementAlert.innerHTML = `⚠️ 警告：基金已透支 NT$ ${Math.abs(remainingBalance).toLocaleString()}！`;
+                settlementAlert.style.color = '#d93636';
+                settlementAlert.style.backgroundColor = '#fdebeb';
+                settlementAlert.style.borderColor = '#fab8b8';
             } else {
-                const diff = mzTotal - half;
-                settlementAlert.innerText = `💡 仁宇應給 毛子 NT$ ${Math.round(diff).toLocaleString()}`;
+                settlementAlert.innerHTML = `✨ 運作良好！本月已攜手分攤了 NT$ ${totalSpent.toLocaleString()} 的家庭基建。`;
+                settlementAlert.style.color = 'var(--primary)';
+                settlementAlert.style.backgroundColor = 'var(--primary-light)';
+                settlementAlert.style.borderColor = '#fadcc8';
             }
         }
 
+        // 網頁端點擊「確認撥款」觸發的雲端同步異步函式
+        function auditRow(rowId, buttonElement) {
+            if(!confirm("確定已將這筆代墊款撥款給對方了嗎？\n確認後將自動紀錄今日撥款日期。")) return;
+            
+            buttonElement.disabled = true;
+            buttonElement.innerText = "同步中...";
+            
+            fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "updateStatus",
+                    rowId: rowId
+                })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if(result.result === "success") {
+                    // 找到本機資料陣列中對應的那一筆，直接修改其狀態與撥款日期
+                    const recordIndex = records.findIndex(r => r.rowId === rowId);
+                    if(recordIndex !== -1) {
+                        records[recordIndex].status = "已撥款";
+                        records[recordIndex].payDate = result.payDate;
+                    }
+                    // 重新渲染 UI 畫面
+                    updateUI();
+                } else {
+                    alert("核銷失敗，請重試！");
+                    buttonElement.disabled = false;
+                    buttonElement.innerText = "⚙ 點擊撥款";
+                }
+            })
+            .catch(err => {
+                console.error("同步失敗:", err);
+                alert("網路異常，無法將核銷狀態寫回試算表");
+                buttonElement.disabled = false;
+                buttonElement.innerText = "⚙ 點擊撥款";
+            });
+        }
+
+        // 新增記帳表單送出
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -475,9 +640,8 @@
             .then(res => res.json())
             .then(result => {
                 if(result.result === "success") {
-                    records.unshift(newData);
-                    updateUI();
-                    
+                    // 為了即時顯示，直接重新跟雲端拉一次最新資料(含最新的 rowId)
+                    fetchCloudData();
                     document.getElementById('amount').value = '';
                     document.getElementById('purpose').value = '';
                 } else {
