@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>毛毛宇家的金庫2.0</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f4;          /* 淡淡的森林大地灰綠 */
+            --card-bg: #ffffff;
+            --text-main: #2d3a2e;         /* 深橡木綠 */
+            --text-sub: #607261;          /* 苔蘚綠 */
+            --primary: #d97736;           /* 松果暖橘 */
+            --primary-light: #fdf2eb;     /* 暖橘淡背景 */
+            --renyu-color: #4a7c59;       /* 仁宇：常青樹綠 */
+            --maozi-color: #e28743;       /* 毛子：秋楓橘 */
+            --border: #e2ede4;            /* 淺綠邊框 */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 16px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 24px 0 24px 0;
+        }
+
+        header h1 {
+            font-size: 22px;
+            color: var(--text-main);
+            letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        /* 儀表板與結算區 */
+        .dashboard {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(45, 58, 46, 0.04);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .total-box {
+            text-align: center;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .total-label {
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        .total-amount {
+            font-size: 30px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        .split-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .split-col {
+            display: table-cell;
+            width: 50%;
+            text-align: center;
+        }
+
+        .split-col:first-child {
+            border-right: 1px solid var(--border);
+        }
+
+        .member-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .member-name.renyu { color: var(--renyu-color); }
+        .member-name.maozi { color: var(--maozi-color); }
+
+        .member-amount {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .settlement-alert {
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 8px;
+            border: 1px solid #fadcc8;
+        }
+
+        /* 表單區 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(45, 58, 46, 0.04);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            border-left: 4px solid var(--renyu-color);
+            padding-left: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-main);
+            background-color: #fafbfa;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--renyu-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+        }
+
+        .radio-group {
+            display: table;
+            width: 100%;
+        }
+
+        .radio-label {
+            display: table-cell;
+            width: 50%;
+            text-align: center;
+            padding: 12px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 14px;
+            background: #fff;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .radio-label:first-child {
+            border-radius: 8px 0 0 8px;
+            border-right: none;
+        }
+
+        .radio-label:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .radio-label.ry-btn {
+            background-color: var(--renyu-color);
+            color: white;
+            border-color: var(--renyu-color);
+        }
+
+        input[type="radio"]:checked + .radio-label.mz-btn {
+            background-color: var(--maozi-color);
+            color: white;
+            border-color: var(--maozi-color);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--renyu-color); /* 預設使用常青綠按鈕 */
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(74, 124, 89, 0.15);
+            transition: all 0.2s;
+        }
+
+        .btn-submit:active {
+            background-color: #3b6347;
+        }
+
+        .btn-submit:disabled {
+            background-color: var(--text-sub);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* 歷史明細 */
+        .history-list {
+            list-style: none;
+        }
+
+        .history-item {
+            display: table;
+            width: 100%;
+            padding: 14px 0;
+            border-bottom: 1px solid #edf2ee;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-main {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .item-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .item-meta {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .item-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            color: white;
+            margin-right: 4px;
+            font-weight: 500;
+        }
+
+        .item-badge.ry { background-color: var(--renyu-color); }
+        .item-badge.mz { background-color: var(--maozi-color); }
+
+        .item-amount {
+            display: table-cell;
+            text-align: right;
+            vertical-align: middle;
+            font-weight: bold;
+            font-size: 15px;
+            color: var(--text-main);
+        }
+        
+        .loading-text {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-sub);
+            padding: 16px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🌲 毛毛宇家的金庫2.0</h1>
+        <p>一起堅固我們家</p>
+    </header>
+
+    <div class="dashboard">
+        <div class="total-box">
+            <div class="total-label">本月共同總支出</div>
+            <div class="total-amount">NT$ <span id="totalExpenses">0</span></div>
+        </div>
+        <div class="split-grid">
+            <div class="split-col">
+                <div class="member-name renyu">仁宇已墊付</div>
+                <div class="member-amount" id="renyuPaid">NT$ 0</div>
+            </div>
+            <div class="split-col">
+                <div class="member-name maozi">毛子已墊付</div>
+                <div class="member-amount" id="maoziPaid">NT$ 0</div>
+            </div>
+        </div>
+        <div class="settlement-alert" id="settlementText">
+            正在與金庫連線中...
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">新增花費</div>
+        <form id="expenseForm">
+            <div class="form-group">
+                <label>付款人</label>
+                <div class="radio-group">
+                    <input type="radio" id="payByRenyu" name="payer" value="仁宇" checked>
+                    <label for="payByRenyu" class="radio-label ry-btn">仁宇</label>
+                    
+                    <input type="radio" id="payByMaozi" name="payer" value="毛子">
+                    <label for="payByMaozi" class="radio-label mz-btn">毛子</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">金額 (NT$)</label>
+                <input type="number" id="amount" class="form-control" placeholder="請輸入金額" required pattern="[0-9]*" inputmode="numeric">
+            </div>
+
+            <div class="form-group">
+                <label for="purpose">品項 / 用途</label>
+                <input type="text" id="purpose" class="form-control" placeholder="例如：買菜、水電費" required>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-submit">紀錄一筆</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="card-title">最近記帳明細</div>
+        <ul class="history-list" id="historyList">
+            <div class="loading-text" id="loadingText">正在讀取最新帳目...</div>
+        </ul>
+    </div>
+
+    <script>
+        // ⚠️ 請在這裡貼上你剛剛在步驟二取得的 GAS 網址
+        const API_URL = "這裡替換成你的GAS網址";
+        
+        let records = [];
+        const form = document.getElementById('expenseForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // 動態微調送出按鈕顏色的視覺小彩蛋
+        document.querySelectorAll('input[name="payer"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if(e.target.value === '仁宇') {
+                    submitBtn.style.backgroundColor = 'var(--renyu-color)';
+                    submitBtn.style.boxShadow = '0 4px 12px rgba(74, 124, 89, 0.15)';
+                } else {
+                    submitBtn.style.backgroundColor = 'var(--maozi-color)';
+                    submitBtn.style.boxShadow = '0 4px 12px rgba(226, 135, 67, 0.15)';
+                }
+            });
+        });
+
+        function fetchCloudData() {
+            if(API_URL === "這裡替換成你的GAS網址") {
+                document.getElementById('settlementText').innerText = "💡 請先在程式碼中填入你的 GAS 網址喔！";
+                return;
+            }
+            
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    records = data;
+                    const loadingText = document.getElementById('loadingText');
+                    if(loadingText) loadingText.remove();
+                    updateUI();
+                })
+                .catch(error => {
+                    console.error("讀取失敗:", error);
+                    document.getElementById('settlementText').innerText = "❌ 金庫讀取失敗，請重新整理";
+                });
+        }
+        
+        function updateUI() {
+            let total = 0;
+            let ryTotal = 0;
+            let mzTotal = 0;
+            
+            const listElement = document.getElementById('historyList');
+            listElement.innerHTML = '';
+
+            if (records.length === 0) {
+                listElement.innerHTML = '<div class="loading-text">目前金庫空空如也，來記第一筆吧！</div>';
+            }
+
+            records.forEach(res => {
+                total += res.amount;
+                if(res.payer === '仁宇') ryTotal += res.amount;
+                if(res.payer === '毛子') mzTotal += res.amount;
+
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                const badgeClass = res.payer === '仁宇' ? 'ry' : 'mz';
+                
+                li.innerHTML = `
+                    <div class="item-main">
+                        <div class="item-title">${res.purpose}</div>
+                        <div class="item-meta">
+                            <span class="item-badge ${badgeClass}">${res.payer}</span>
+                        </div>
+                    </div>
+                    <div class="item-amount">NT$ ${res.amount.toLocaleString()}</div>
+                `;
+                listElement.appendChild(li);
+            });
+
+            document.getElementById('totalExpenses').innerText = total.toLocaleString();
+            document.getElementById('renyuPaid').innerText = 'NT$ ' + ryTotal.toLocaleString();
+            document.getElementById('maoziPaid').innerText = 'NT$ ' + mzTotal.toLocaleString();
+
+            const settlementAlert = document.getElementById('settlementText');
+            const half = total / 2;
+            
+            if (ryTotal === mzTotal) {
+                settlementAlert.innerText = '✨ 雙方金額對等，平穩過日子！';
+            } else if (ryTotal > mzTotal) {
+                const diff = ryTotal - half;
+                settlementAlert.innerText = `💡 毛子應給 仁宇 NT$ ${Math.round(diff).toLocaleString()}`;
+            } else {
+                const diff = mzTotal - half;
+                settlementAlert.innerText = `💡 仁宇應給 毛子 NT$ ${Math.round(diff).toLocaleString()}`;
+            }
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if(API_URL === "https://script.google.com/macros/s/AKfycbwaTVZsxtJ_fUpM1Em624hvAEgvtrt0jgIjngZWPRqmKUYcnZ28McNPXA3OZoJdW64g/exec") {
+                alert("請先填入 GAS 網址再測試記帳功能！");
+                return;
+            }
+            
+            const payer = document.querySelector('input[name="payer"]:checked').value;
+            const amount = parseInt(document.getElementById('amount').value, 10);
+            const purpose = document.getElementById('purpose').value;
+
+            if(!amount || !purpose) return;
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "正在同步至金庫...";
+
+            const newData = { payer, amount, purpose };
+
+            fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify(newData)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if(result.result === "success") {
+                    records.unshift(newData);
+                    updateUI();
+                    
+                    document.getElementById('amount').value = '';
+                    document.getElementById('purpose').value = '';
+                } else {
+                    alert("儲存失敗，請重試！");
+                }
+            })
+            .catch(err => {
+                console.error("同步失敗:", err);
+                alert("連線異常，資料未存入試算表");
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "紀錄一筆";
+            });
+        });
+
+        fetchCloudData();
+    </script>
+</body>
+</html>
