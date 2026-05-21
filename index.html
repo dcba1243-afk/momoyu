@@ -463,9 +463,10 @@
             const month = now.getMonth() + 1;
 
             if (year > 2026 || (year === 2026 && month >= 6)) {
-                return { total: 20900, text: "6月新制 (13,200 + 7,700)" };
+                return { total: 20900, offset: 0, text: "6月新制 (13,200 + 7,700)" };
             } else {
-                return { total: 857, text: "5月舊制" };
+                // 🛠️ 智能抵銷邏輯：配額設為 17500，並加入一個 16643 的初始花費基底
+                return { total: 17500, offset: 16643, text: "5月舊制" };
             }
         }
 
@@ -490,14 +491,17 @@
         }
         
         function updateUI() {
-            let totalSpent = 0;   // 基金總花費 (不論是否撥款)
-            let ryUnpaid = 0;     // 仁宇「尚未被撥款」的代墊款
-            let mzUnpaid = 0;     // 毛子「尚未被撥款」的代墊款
+            const budgetInfo = getBudgetForCurrentMonth();
+            
+            // 讓初始花費總額直接包含你指定的 16,643 元歷史開銷
+            let totalSpent = budgetInfo.offset;   
+            let ryUnpaid = 0;     
+            let mzUnpaid = 0;     
             
             const listElement = document.getElementById('historyList');
             listElement.innerHTML = '';
 
-            if (records.length === 0) {
+            if (records.length === 0 && budgetInfo.offset === 0) {
                 listElement.innerHTML = '<div class="loading-text">目前金庫空空如也，來記第一筆吧！</div>';
             }
 
@@ -509,7 +513,6 @@
                 // 計算開銷
                 totalSpent += res.amount;
 
-                // 只有「未撥款」的墊付才會出現在上方的「應補款金額」看板中
                 if(res.payer === '仁宇代墊' || res.payer === '仁宇' || res.payer === '老公') {
                     displayPayer = '仁宇代墊';
                     badgeClass = 'ry';
@@ -526,7 +529,6 @@
                 const li = document.createElement('li');
                 li.className = 'history-item';
                 
-                // 處理右側核銷稽核按鈕/狀態的 HTML
                 let auditHtml = '';
                 if (displayPayer === '家庭帳戶金融卡直刷') {
                     auditHtml = `<span class="status-none">💳 無需撥款</span>`;
@@ -536,7 +538,6 @@
                     auditHtml = `<button class="btn-audit" onclick="auditRow(${res.rowId}, this)">⚙ 點擊撥款</button>`;
                 }
 
-                // 如果已經核銷撥款，字體加上刪除線淡化
                 const titleClass = isSettled ? "item-title strikethrough" : "item-title";
 
                 li.innerHTML = `
@@ -555,14 +556,11 @@
                 listElement.appendChild(li);
             });
 
-            // 算預算
-            const budgetInfo = getBudgetForCurrentMonth();
+            // 算剩餘可用
             const remainingBalance = budgetInfo.total - totalSpent;
 
             // 顯示至看板
             document.getElementById('fundBalance').innerText = remainingBalance.toLocaleString();
-            
-            // 🛠️ 核心修改：將原本的提示文字精準改為「本月已花了」的加總統計
             document.getElementById('fundInfoText').innerText = `本月已花了: NT$ ${totalSpent.toLocaleString()}`;
             
             document.getElementById('renyuRefund').innerText = 'NT$ ' + ryUnpaid.toLocaleString();
@@ -601,7 +599,6 @@
                 if(result.result === "success") {
                     const recordIndex = records.findIndex(r => r.rowId === rowId);
                     if(recordIndex !== -1) {
-                        records[recordIndex].status = "專用卡已撥款"; 
                         records[recordIndex].status = "已撥款";
                         records[recordIndex].payDate = result.payDate;
                     }
