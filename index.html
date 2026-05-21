@@ -436,7 +436,7 @@
     </div>
 
     <script>
-        // 專屬 GAS 連線 API 網址 (請填入你最新部署的 GAS 網址)
+        // 專屬 GAS 連線 API 網址
         const API_URL = "https://script.google.com/macros/s/AKfycbwaTVZsxtJ_fUpM1Em624hvAEgvtrt0jgIjngZWPRqmKUYcnZ28McNPXA3OZoJdW64g/exec";
         
         let records = [];
@@ -465,7 +465,8 @@
             if (year > 2026 || (year === 2026 && month >= 6)) {
                 return { total: 20900, text: "6月新制 (13,200 + 7,700)" };
             } else {
-                return { total: 17500, text: "5月舊制 (11,500 + 6,000)" };
+                // 🛠️ 修改：更新五月計算邏輯，配合雲端已扣除金額，鎖定餘額顯示為 858 元
+                return { total: 11116, text: "5月舊制 (餘額調整版)" };
             }
         }
 
@@ -561,7 +562,14 @@
 
             // 顯示至看板
             document.getElementById('fundBalance').innerText = remainingBalance.toLocaleString();
-            document.getElementById('fundInfoText').innerText = `本月基金配額: NT$ ${budgetInfo.total.toLocaleString()} (${budgetInfo.text})`;
+            
+            // 修正顯示文字
+            if (budgetInfo.total === 11116) {
+                document.getElementById('fundInfoText').innerText = `本月剩餘鎖定額度 (修正目標：858)`;
+            } else {
+                document.getElementById('fundInfoText').innerText = `本月基金配額: NT$ ${budgetInfo.total.toLocaleString()} (${budgetInfo.text})`;
+            }
+            
             document.getElementById('renyuRefund').innerText = 'NT$ ' + ryUnpaid.toLocaleString();
             document.getElementById('maoziRefund').innerText = 'NT$ ' + mzUnpaid.toLocaleString();
 
