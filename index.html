@@ -363,7 +363,7 @@
     </div>
 
     <script>
-        // ⚠️ 請在這裡貼上你剛剛在步驟二取得的 GAS 網址
+        // 專屬 GAS 連線 API 網址
         const API_URL = "https://script.google.com/macros/s/AKfycbwaTVZsxtJ_fUpM1Em624hvAEgvtrt0jgIjngZWPRqmKUYcnZ28McNPXA3OZoJdW64g/exec";
         
         let records = [];
@@ -384,8 +384,8 @@
         });
 
         function fetchCloudData() {
-            if(API_URL === "https://script.google.com/macros/s/AKfycbwaTVZsxtJ_fUpM1Em624hvAEgvtrt0jgIjngZWPRqmKUYcnZ28McNPXA3OZoJdW64g/exec") {
-                document.getElementById('settlementText').innerText = ""https://script.google.com/macros/s/AKfycbwaTVZsxtJ_fUpM1Em624hvAEgvtrt0jgIjngZWPRqmKUYcnZ28McNPXA3OZoJdW64g/ex";
+            if(API_URL === "" || API_URL.includes("這裡替換成")) {
+                document.getElementById('settlementText').innerText = "💡 請先在程式碼中填入你的 GAS 網址喔！";
                 return;
             }
             
@@ -456,11 +456,6 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            if(API_URL === "https://script.google.com/macros/s/AKfycbwaTVZsxtJ_fUpM1Em624hvAEgvtrt0jgIjngZWPRqmKUYcnZ28McNPXA3OZoJdW64g/exec") {
-                alert("請先填入 GAS 網址再測試記帳功能！");
-                return;
-            }
             
             const payer = document.querySelector('input[name="payer"]:checked').value;
             const amount = parseInt(document.getElementById('amount').value, 10);
