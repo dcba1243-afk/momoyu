@@ -465,8 +465,8 @@
             if (year > 2026 || (year === 2026 && month >= 6)) {
                 return { total: 20900, text: "6月新制 (13,200 + 7,700)" };
             } else {
-                // 🛠️ 修改：更新五月計算邏輯，配合雲端已扣除金額，鎖定餘額顯示為 858 元
-                return { total: 11116, text: "5月舊制 (餘額調整版)" };
+                // 🛠️ 精準修正：將五月基底調整為 857 元，確保無開銷時完美顯示 857
+                return { total: 857, text: "5月舊制 (餘額調整版)" };
             }
         }
 
@@ -564,8 +564,8 @@
             document.getElementById('fundBalance').innerText = remainingBalance.toLocaleString();
             
             // 修正顯示文字
-            if (budgetInfo.total === 11116) {
-                document.getElementById('fundInfoText').innerText = `本月剩餘鎖定額度 (修正目標：858)`;
+            if (budgetInfo.total === 857) {
+                document.getElementById('fundInfoText').innerText = `本月剩餘鎖定額度 (修正目標：857)`;
             } else {
                 document.getElementById('fundInfoText').innerText = `本月基金配額: NT$ ${budgetInfo.total.toLocaleString()} (${budgetInfo.text})`;
             }
@@ -604,13 +604,11 @@
             .then(res => res.json())
             .then(result => {
                 if(result.result === "success") {
-                    // 找到本機資料陣列中對應的那一筆，直接修改其狀態與撥款日期
                     const recordIndex = records.findIndex(r => r.rowId === rowId);
                     if(recordIndex !== -1) {
                         records[recordIndex].status = "已撥款";
                         records[recordIndex].payDate = result.payDate;
                     }
-                    // 重新渲染 UI 畫面
                     updateUI();
                 } else {
                     alert("核銷失敗，請重試！");
@@ -648,7 +646,6 @@
             .then(res => res.json())
             .then(result => {
                 if(result.result === "success") {
-                    // 為了即時顯示，直接重新跟雲端拉一次最新資料(含最新的 rowId)
                     fetchCloudData();
                     document.getElementById('amount').value = '';
                     document.getElementById('purpose').value = '';
