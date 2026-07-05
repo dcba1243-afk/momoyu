@@ -488,7 +488,7 @@
         function updateUI() {
             const now = new Date();
             const currentYear = now.getFullYear();
-            const currentMonth = now.getMonth() + 1; // 智能獲取現在的真實月份（例如 7）
+            const currentMonth = now.getMonth() + 1; // 2026年7月
 
             const budgetInfo = getBudgetForMonth(currentYear, currentMonth);
             
@@ -502,18 +502,24 @@
             let hasDisplayItems = false;
 
             records.forEach(res => {
-                // 解析每筆紀錄的年份與月份
                 let recordYear = currentYear;
                 let recordMonth = currentMonth;
+                
+                // 🛠️ 強大相容彈性解析：同時支援 "2026-07-05" 或 "2026/07/05" 等多種可能的時間字串格式
                 if (res.time) {
-                    const parts = res.time.split('-');
-                    if (parts.length >= 2) {
-                        recordYear = parseInt(parts[0], 10);
-                        recordMonth = parseInt(parts[1], 10);
+                    let dateStr = res.time.toString();
+                    let separator = dateStr.includes('-') ? '-' : (dateStr.includes('/') ? '/' : null);
+                    
+                    if (separator) {
+                        const parts = dateStr.split(separator);
+                        if (parts.length >= 2) {
+                            recordYear = parseInt(parts[0], 10);
+                            recordMonth = parseInt(parts[1], 10);
+                        }
                     }
                 }
 
-                // 【關鍵安全鎖】：網頁只計算並顯示與「當前月份」完全相符的資料！
+                // 篩選出目前當月 (7月) 的資料
                 if (recordYear !== currentYear || recordMonth !== currentMonth) {
                     return;
                 }
