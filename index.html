@@ -436,14 +436,12 @@
     </div>
 
     <script>
-        // 專屬 GAS 連線 API 網址
         const API_URL = "https://script.google.com/macros/s/AKfycbwaTVZsxtJ_fUpM1Em624hvAEgvtrt0jgIjngZWPRqmKUYcnZ28McNPXA3OZoJdW64g/exec";
         
         let records = [];
         const form = document.getElementById('expenseForm');
         const submitBtn = document.getElementById('submitBtn');
 
-        // 按鈕視覺顏色切換
         document.querySelectorAll('input[name="payer"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 if(e.target.value === '仁宇代墊') {
@@ -456,17 +454,14 @@
             });
         });
 
-        // 動態計算當月理財基金總額
-        function getBudgetForCurrentMonth() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth() + 1;
-
-            if (year > 2026 || (year === 2026 && month >= 6)) {
-                return { total: 20900, offset: 0, text: "6月新制 (13,200 + 7,700)" };
+        // 智能月份配額判定
+        function getBudgetForMonth(targetYear, targetMonth) {
+            if (targetYear > 2026 || (targetYear === 2026 && targetMonth >= 6)) {
+                return { total: 20900, offset: 0, label: `${targetMonth}月基金` };
+            } else if (targetYear === 2026 && targetMonth === 5) {
+                return { total: 17500, offset: 16643, label: "5月舊制" };
             } else {
-                // 🛠️ 智能抵銷邏輯：配額設為 17500，並加入一個 16643 的初始花費基底
-                return { total: 17500, offset: 16643, text: "5月舊制" };
+                return { total: 17500, offset: 0, label: "更早之前" };
             }
         }
 
@@ -491,9 +486,12 @@
         }
         
         function updateUI() {
-            const budgetInfo = getBudgetForCurrentMonth();
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1; // 智能獲取現在的真實月份（例如 7）
+
+            const budgetInfo = getBudgetForMonth(currentYear, currentMonth);
             
-            // 讓初始花費總額直接包含你指定的 16,643 元歷史開銷
             let totalSpent = budgetInfo.offset;   
             let ryUnpaid = 0;     
             let mzUnpaid = 0;     
@@ -501,16 +499,30 @@
             const listElement = document.getElementById('historyList');
             listElement.innerHTML = '';
 
-            if (records.length === 0 && budgetInfo.offset === 0) {
-                listElement.innerHTML = '<div class="loading-text">目前金庫空空如也，來記第一筆吧！</div>';
-            }
+            let hasDisplayItems = false;
 
             records.forEach(res => {
+                // 解析每筆紀錄的年份與月份
+                let recordYear = currentYear;
+                let recordMonth = currentMonth;
+                if (res.time) {
+                    const parts = res.time.split('-');
+                    if (parts.length >= 2) {
+                        recordYear = parseInt(parts[0], 10);
+                        recordMonth = parseInt(parts[1], 10);
+                    }
+                }
+
+                // 【關鍵安全鎖】：網頁只計算並顯示與「當前月份」完全相符的資料！
+                if (recordYear !== currentYear || recordMonth !== currentMonth) {
+                    return;
+                }
+
+                hasDisplayItems = true;
                 let displayPayer = res.payer;
                 let badgeClass = 'cd';
                 let isSettled = res.status === '已撥款';
 
-                // 計算開銷
                 totalSpent += res.amount;
 
                 if(res.payer === '仁宇代墊' || res.payer === '仁宇' || res.payer === '老公') {
@@ -556,31 +568,32 @@
                 listElement.appendChild(li);
             });
 
-            // 算剩餘可用
+            if (!hasDisplayItems && budgetInfo.offset === 0) {
+                listElement.innerHTML = `<div class="loading-text">目前 ${currentMonth} 月金庫空空如也，來記第一筆吧！</div>`;
+            }
+
             const remainingBalance = budgetInfo.total - totalSpent;
 
-            // 顯示至看板
             document.getElementById('fundBalance').innerText = remainingBalance.toLocaleString();
-            document.getElementById('fundInfoText').innerText = `本月已花了: NT$ ${totalSpent.toLocaleString()}`;
+            document.getElementById('fundInfoText').innerText = `${currentMonth}月已花了: NT$ ${totalSpent.toLocaleString()}`;
             
             document.getElementById('renyuRefund').innerText = 'NT$ ' + ryUnpaid.toLocaleString();
             document.getElementById('maoziRefund').innerText = 'NT$ ' + mzUnpaid.toLocaleString();
 
             const settlementAlert = document.getElementById('settlementText');
             if (remainingBalance < 0) {
-                settlementAlert.innerHTML = `⚠️ 警告：基金已透支 NT$ ${Math.abs(remainingBalance).toLocaleString()}！`;
+                settlementAlert.innerHTML = `⚠️ 警告：${currentMonth}月基金已透支 NT$ ${Math.abs(remainingBalance).toLocaleString()}！`;
                 settlementAlert.style.color = '#d93636';
                 settlementAlert.style.backgroundColor = '#fdebeb';
                 settlementAlert.style.borderColor = '#fab8b8';
             } else {
-                settlementAlert.innerHTML = `✨ 運作良好！本月已攜手分攤了 NT$ ${totalSpent.toLocaleString()} 的家庭基建。`;
+                settlementAlert.innerHTML = `✨ 運作良好！${currentMonth}月已攜手分攤了 NT$ ${(totalSpent - budgetInfo.offset).toLocaleString()} 的家庭基建。`;
                 settlementAlert.style.color = 'var(--primary)';
                 settlementAlert.style.backgroundColor = 'var(--primary-light)';
                 settlementAlert.style.borderColor = '#fadcc8';
             }
         }
 
-        // 網頁端點擊「確認撥款」觸發的雲端同步異步函式
         function auditRow(rowId, buttonElement) {
             if(!confirm("確定已將這筆代墊款撥款給對方了嗎？\n確認後將自動紀錄今日撥款日期。")) return;
             
@@ -611,13 +624,12 @@
             })
             .catch(err => {
                 console.error("同步失敗:", err);
-                alert("網路異常，無法將核銷狀態寫回試算表");
+                alert("網路異常");
                 buttonElement.disabled = false;
                 buttonElement.innerText = "⚙ 點擊撥款";
             });
         }
 
-        // 新增記帳表單送出
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -648,7 +660,7 @@
             })
             .catch(err => {
                 console.error("同步失敗:", err);
-                alert("連線異常，資料未存入試算表");
+                alert("連線異常");
             })
             .finally(() => {
                 submitBtn.disabled = false;
