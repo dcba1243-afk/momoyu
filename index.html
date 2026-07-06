@@ -621,6 +621,16 @@
             return `${yearPrefix}${mm}/${dd}`;
         }
 
+        // HTML 跳脫：使用者輸入的品項等文字塞進畫面前先處理，避免 XSS
+        function escapeHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function updateUI() {
             const now = new Date();
             const currentYear = now.getFullYear();
@@ -687,19 +697,19 @@
                     if (displayPayer === '家庭帳戶金融卡直刷') {
                         auditHtml = `<span class="status-none">💳 無需撥款</span>`;
                     } else if (isSettled) {
-                        auditHtml = `<span class="status-settled">✓ 已撥款<span class="pay-date-text">📅 ${res.payDate || '已完成'}</span></span>`;
+                        auditHtml = `<span class="status-settled">✓ 已撥款<span class="pay-date-text">📅 ${escapeHtml(res.payDate || '已完成')}</span></span>`;
                     } else {
-                        auditHtml = `<button class="btn-audit" onclick="auditRow(${res.rowId}, this)">⚙ 點擊撥款</button>`;
+                        auditHtml = `<button class="btn-audit" onclick="auditRow(${Number(res.rowId)}, this)">⚙ 點擊撥款</button>`;
                     }
 
                     const titleClass = isSettled ? "item-title strikethrough" : "item-title";
 
                     li.innerHTML = `
                         <div class="item-main">
-                            <div class="${titleClass}">${res.purpose}</div>
+                            <div class="${titleClass}">${escapeHtml(res.purpose)}</div>
                             <div class="item-meta">
                                 <span class="item-badge ${badgeClass}">${displayPayer}</span>
-                                <span style="color:#a0b2a1;">${formatDisplayDate(res.time)}</span>
+                                <span style="color:#a0b2a1;">${escapeHtml(formatDisplayDate(res.time))}</span>
                             </div>
                         </div>
                         <div class="item-right">
