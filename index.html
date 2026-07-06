@@ -497,20 +497,29 @@
             return { total, offset, label: `${targetMonth}月基金` };
         }
 
+        // 英文月份縮寫對照表（給 JS Date.toString() 格式用）
+        const MONTH_ABBR = {
+            jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+            jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12
+        };
+
         /* =========================================================
          * 📅 日期解析（第三點改善）
          * ---------------------------------------------------------
          * 以前只硬切 "-" 或 "/" 的前兩段，格式一不符就悄悄把整筆
          * 資料算進「當月」，導致餘額被默默算錯。
          *
+         * ⚠️ 你們試算表實際存的時間是這種格式：
+         *   "Sun Jul 05 2026 21:45:09 GMT+0800 (台北標準時間)"
+         * 它沒有 "-" 也沒有 "/"，月份是英文縮寫（Jul），
+         * 所以這裡特別針對它抓「英文月份縮寫」，不經時區換算最穩。
+         *
          * 現在改為多層嘗試，並在「真的解析不出來」時回傳 null，
          * 由呼叫端明確跳過並提示，而不是靜默污染當月數字。
          *
          * 支援格式範例：
-         *   2026-07-05
-         *   2026/7/5
-         *   2026.07.05
-         *   2026-07-05T10:30:00（ISO）
+         *   Sun Jul 05 2026 21:45:09 GMT+0800 (台北標準時間)
+         *   2026-07-05 / 2026/7/5 / 2026.07.05 / 2026-07-05T10:30:00
          *   真正的 Date 物件
          * 回傳：{ year, month } 或 null
          * ========================================================= */
@@ -527,18 +536,30 @@
 
             const str = timeValue.toString().trim();
 
-            // 情況二：用正規表達式抓「開頭 4 位年份 + 非數字分隔 + 1~2 位月份」
-            // 可同時吃 - / . 以及 ISO 的 T 分隔，且不受時區影響
-            const match = str.match(/(\d{4})\D+(\d{1,2})/);
-            if (match) {
-                const year = parseInt(match[1], 10);
-                const month = parseInt(match[2], 10);
+            // 情況二：數字開頭的格式（ISO / 斜線 / 點），如 2026-07-05、2026/7/5
+            // 用 ^ 錨定「開頭」的 4 位年份，避免誤抓到後面時間裡的數字（如小時）
+            const numMatch = str.match(/^\s*(\d{4})\D+(\d{1,2})/);
+            if (numMatch) {
+                const year = parseInt(numMatch[1], 10);
+                const month = parseInt(numMatch[2], 10);
                 if (year >= 2000 && year <= 2100 && month >= 1 && month <= 12) {
                     return { year, month };
                 }
             }
 
-            // 情況三：最後交給瀏覽器原生 Date 解析（處理其他標準格式）
+            // 情況三：JS Date.toString() 格式，直接抓「英文月份縮寫 + 4 位年份」
+            // 不透過 new Date()，可避開跨月午夜的時區位移問題
+            const abbrMatch = str.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/i);
+            const yearMatch = str.match(/\b(19|20)\d{2}\b/);
+            if (abbrMatch && yearMatch) {
+                const month = MONTH_ABBR[abbrMatch[1].toLowerCase()];
+                const year = parseInt(yearMatch[0], 10);
+                if (month && year >= 2000 && year <= 2100) {
+                    return { year, month };
+                }
+            }
+
+            // 情況四：最後交給瀏覽器原生 Date 解析（處理其他標準格式）
             const d = new Date(str);
             if (!isNaN(d.getTime())) {
                 return { year: d.getFullYear(), month: d.getMonth() + 1 };
