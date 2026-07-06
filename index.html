@@ -589,6 +589,38 @@
                 });
         }
         
+        // 把各種可能的付款人寫法統一成顯示名稱、徽章樣式與分類
+        function classifyPayer(payer) {
+            if (payer === '仁宇代墊' || payer === '仁宇' || payer === '老公') {
+                return { displayPayer: '仁宇代墊', badgeClass: 'ry', kind: 'ry' };
+            }
+            if (payer === '毛子代墊' || payer === '毛子' || payer === '老婆') {
+                return { displayPayer: '毛子代墊', badgeClass: 'mz', kind: 'mz' };
+            }
+            return { displayPayer: '家庭帳戶金融卡直刷', badgeClass: 'cd', kind: 'cd' };
+        }
+
+        // 取得可排序的時間戳（給明細排序用）。排序容忍度高，直接用 new Date 即可；
+        // 解析不出來的給 0，讓它排到最後，不會影響金額計算。
+        function getSortableTime(res) {
+            if (!res || !res.time) return 0;
+            const t = new Date(res.time).getTime();
+            return isNaN(t) ? 0 : t;
+        }
+
+        // 把冗長的時間字串縮短成清爽格式：當年 → "07/05"；跨年 → "2025/12/31"
+        // 若真的解析不出來，就退回顯示原字串，不弄丟資訊。
+        function formatDisplayDate(timeValue) {
+            if (!timeValue) return '';
+            const d = new Date(timeValue);
+            if (isNaN(d.getTime())) return timeValue.toString();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            const yearPrefix = d.getFullYear() !== new Date().getFullYear()
+                ? `${d.getFullYear()}/` : '';
+            return `${yearPrefix}${mm}/${dd}`;
+        }
+
         function updateUI() {
             const now = new Date();
             const currentYear = now.getFullYear();
@@ -602,14 +634,12 @@
 
             // 收集「日期無法辨識」的資料，稍後提示使用者（不再靜默算進當月）
             const unparsedRecords = [];
-            
-            const listElement = document.getElementById('historyList');
-            listElement.innerHTML = '';
 
-            let hasDisplayItems = false;
-
+            /* ---------------------------------------------------------
+             * 第一部分：金額計算（只算「當月」）
+             * 家庭基金餘額、未結算補款維持原本的當月邏輯，不受明細顯示影響。
+             * --------------------------------------------------------- */
             records.forEach(res => {
-                // 🛠️ 改用 robust 的解析函式
                 const ym = parseYearMonth(res.time);
 
                 // 🛑 解析失敗：明確跳過並記錄，避免壞資料混進本月花費
@@ -619,63 +649,66 @@
                     return;
                 }
 
-                // 篩選出目前當月的資料
+                // 只計算當月的資料
                 if (ym.year !== currentYear || ym.month !== currentMonth) {
                     return;
                 }
 
-                hasDisplayItems = true;
-                let displayPayer = res.payer;
-                let badgeClass = 'cd';
-                let isSettled = res.status === '已撥款';
-
                 totalSpent += res.amount;
 
-                if(res.payer === '仁宇代墊' || res.payer === '仁宇' || res.payer === '老公') {
-                    displayPayer = '仁宇代墊';
-                    badgeClass = 'ry';
-                    if (!isSettled) ryUnpaid += res.amount;
-                } else if(res.payer === '毛子代墊' || res.payer === '毛子' || res.payer === '老婆') {
-                    displayPayer = '毛子代墊';
-                    badgeClass = 'mz';
-                    if (!isSettled) mzUnpaid += res.amount;
-                } else {
-                    displayPayer = '家庭帳戶金融卡直刷';
-                    badgeClass = 'cd';
-                }
-
-                const li = document.createElement('li');
-                li.className = 'history-item';
-                
-                let auditHtml = '';
-                if (displayPayer === '家庭帳戶金融卡直刷') {
-                    auditHtml = `<span class="status-none">💳 無需撥款</span>`;
-                } else if (isSettled) {
-                    auditHtml = `<span class="status-settled">✓ 已撥款<span class="pay-date-text">📅 ${res.payDate || '已完成'}</span></span>`;
-                } else {
-                    auditHtml = `<button class="btn-audit" onclick="auditRow(${res.rowId}, this)">⚙ 點擊撥款</button>`;
-                }
-
-                const titleClass = isSettled ? "item-title strikethrough" : "item-title";
-
-                li.innerHTML = `
-                    <div class="item-main">
-                        <div class="item-title ${titleClass}">${res.purpose}</div>
-                        <div class="item-meta">
-                            <span class="item-badge ${badgeClass}">${displayPayer}</span>
-                            <span style="color:#a0b2a1;">${res.time}</span>
-                        </div>
-                    </div>
-                    <div class="item-right">
-                        <div class="item-amount">NT$ ${res.amount.toLocaleString()}</div>
-                        <div class="audit-zone">${auditHtml}</div>
-                    </div>
-                `;
-                listElement.appendChild(li);
+                const isSettled = res.status === '已撥款';
+                const { kind } = classifyPayer(res.payer);
+                if (kind === 'ry' && !isSettled) ryUnpaid += res.amount;
+                if (kind === 'mz' && !isSettled) mzUnpaid += res.amount;
             });
 
-            if (!hasDisplayItems && budgetInfo.offset === 0) {
-                listElement.innerHTML = `<div class="loading-text">目前 ${currentMonth} 月金庫空空如也，來記第一筆吧！</div>`;
+            /* ---------------------------------------------------------
+             * 第二部分：明細顯示（最近 10 筆，不分月份、不論是否撥款）
+             * 依時間新到舊排序後取前 10 筆。
+             * --------------------------------------------------------- */
+            const listElement = document.getElementById('historyList');
+            listElement.innerHTML = '';
+
+            const recentRecords = [...records]
+                .sort((a, b) => getSortableTime(b) - getSortableTime(a))
+                .slice(0, 10);
+
+            if (recentRecords.length === 0) {
+                listElement.innerHTML = `<div class="loading-text">還沒有任何記帳，來記第一筆吧！</div>`;
+            } else {
+                recentRecords.forEach(res => {
+                    const isSettled = res.status === '已撥款';
+                    const { displayPayer, badgeClass } = classifyPayer(res.payer);
+
+                    const li = document.createElement('li');
+                    li.className = 'history-item';
+
+                    let auditHtml = '';
+                    if (displayPayer === '家庭帳戶金融卡直刷') {
+                        auditHtml = `<span class="status-none">💳 無需撥款</span>`;
+                    } else if (isSettled) {
+                        auditHtml = `<span class="status-settled">✓ 已撥款<span class="pay-date-text">📅 ${res.payDate || '已完成'}</span></span>`;
+                    } else {
+                        auditHtml = `<button class="btn-audit" onclick="auditRow(${res.rowId}, this)">⚙ 點擊撥款</button>`;
+                    }
+
+                    const titleClass = isSettled ? "item-title strikethrough" : "item-title";
+
+                    li.innerHTML = `
+                        <div class="item-main">
+                            <div class="${titleClass}">${res.purpose}</div>
+                            <div class="item-meta">
+                                <span class="item-badge ${badgeClass}">${displayPayer}</span>
+                                <span style="color:#a0b2a1;">${formatDisplayDate(res.time)}</span>
+                            </div>
+                        </div>
+                        <div class="item-right">
+                            <div class="item-amount">NT$ ${res.amount.toLocaleString()}</div>
+                            <div class="audit-zone">${auditHtml}</div>
+                        </div>
+                    `;
+                    listElement.appendChild(li);
+                });
             }
 
             const remainingBalance = budgetInfo.total - totalSpent;
