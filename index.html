@@ -6,17 +6,17 @@
     <title>毛毛宇家的金庫2.0</title>
     <style>
         :root {
-            --bg-color: #f4f6f4;          /* 淡淡的森林大地灰綠 */
+            --bg-color: #f4f6f4;
             --card-bg: #ffffff;
-            --text-main: #2d3a2e;         /* 深橡木綠 */
-            --text-sub: #607261;          /* 苔蘚綠 */
-            --primary: #d97736;           /* 松果暖橘 */
-            --primary-light: #fdf2eb;     /* 暖橘淡背景 */
-            --renyu-color: #4a7c59;       /* 仁宇：常青樹綠 */
-            --maozi-color: #e28743;       /* 毛子：秋楓橘 */
-            --card-color: #5b8296;        /* 家庭帳戶金融卡：莫蘭迪藍 */
-            --success-color: #2b8a3e;     /* 已核銷綠 */
-            --border: #e2ede4;            /* 淺綠邊框 */
+            --text-main: #2d3a2e;
+            --text-sub: #607261;
+            --primary: #d97736;
+            --primary-light: #fdf2eb;
+            --renyu-color: #4a7c59;
+            --maozi-color: #e28743;
+            --card-color: #5b8296;
+            --success-color: #2b8a3e;
+            --border: #e2ede4;
         }
 
         * {
@@ -34,26 +34,10 @@
             margin: 0 auto;
         }
 
-        header {
-            text-align: center;
-            padding: 24px 0;
-        }
+        header { text-align: center; padding: 24px 0; }
+        header h1 { font-size: 22px; color: var(--text-main); letter-spacing: 1.5px; font-weight: 700; }
+        header p { font-size: 13px; color: var(--text-sub); margin-top: 6px; letter-spacing: 0.5px; }
 
-        header h1 {
-            font-size: 22px;
-            color: var(--text-main);
-            letter-spacing: 1.5px;
-            font-weight: 700;
-        }
-
-        header p {
-            font-size: 13px;
-            color: var(--text-sub);
-            margin-top: 6px;
-            letter-spacing: 0.5px;
-        }
-
-        /* 儀表板與結算區 */
         .dashboard {
             background: var(--card-bg);
             border-radius: 16px;
@@ -69,60 +53,36 @@
             padding-bottom: 16px;
             border-bottom: 1px dashed var(--border);
         }
+        .total-label { font-size: 13px; color: var(--text-sub); }
+        .total-amount { font-size: 30px; font-weight: bold; color: var(--primary); margin-top: 4px; }
+        .fund-info { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
 
-        .total-label {
-            font-size: 13px;
-            color: var(--text-sub);
-        }
+        .split-grid { display: table; width: 100%; margin-bottom: 12px; }
+        .split-col { display: table-cell; width: 50%; text-align: center; vertical-align: top; padding: 0 6px; }
+        .split-col:first-child { border-right: 1px solid var(--border); }
 
-        .total-amount {
-            font-size: 30px;
-            font-weight: bold;
-            color: var(--primary);
-            margin-top: 4px;
-        }
-
-        .fund-info {
-            font-size: 12px;
-            color: var(--text-sub);
-            margin-top: 2px;
-        }
-
-        .split-grid {
-            display: table;
-            width: 100%;
-            margin-bottom: 12px;
-        }
-
-        .split-col {
-            display: table-cell;
-            width: 50%;
-            text-align: center;
-        }
-
-        .split-col:first-child {
-            border-right: 1px solid var(--border);
-        }
-
-        .member-name {
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
+        .member-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
         .member-name.renyu { color: var(--renyu-color); }
         .member-name.maozi { color: var(--maozi-color); }
+        .member-amount { font-size: 18px; font-weight: bold; }
+        .member-subnote { font-size: 10px; color: var(--text-sub); margin-top: 2px; }
 
-        .member-amount {
-            font-size: 18px;
-            font-weight: bold;
+        /* 一鍵撥款按鈕 */
+        .btn-settle {
+            margin-top: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: opacity 0.2s;
         }
-        
-        .member-subnote {
-            font-size: 10px;
-            color: var(--text-sub);
-            margin-top: 2px;
-        }
+        .btn-settle.ry { background-color: var(--renyu-color); }
+        .btn-settle.mz { background-color: var(--maozi-color); }
+        .btn-settle:disabled { background-color: #cfd8d1; cursor: default; }
 
         .settlement-alert {
             background-color: var(--primary-light);
@@ -136,7 +96,6 @@
             border: 1px solid #fadcc8;
         }
 
-        /* 表單區 */
         .card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -155,16 +114,8 @@
             padding-left: 8px;
         }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: var(--text-sub);
-            margin-bottom: 6px;
-        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 6px; }
 
         .form-control {
             width: 100%;
@@ -177,21 +128,13 @@
             outline: none;
             transition: all 0.2s;
         }
-
         .form-control:focus {
             border-color: var(--renyu-color);
             background-color: #fff;
             box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
         }
 
-        .radio-group {
-            display: flex;
-            width: 100%;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
+        .radio-group { display: flex; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
         .radio-label {
             flex: 1;
             text-align: center;
@@ -203,36 +146,15 @@
             transition: all 0.2s;
             border-right: 1px solid var(--border);
         }
-
-        .radio-label:last-child {
-            border-right: none;
-        }
-
-        input[type="radio"] {
-            display: none;
-        }
-
-        input[type="radio"]:checked + .radio-label.ry-btn {
-            background-color: var(--renyu-color);
-            color: white;
-            border-color: var(--renyu-color);
-        }
-
-        input[type="radio"]:checked + .radio-label.mz-btn {
-            background-color: var(--maozi-color);
-            color: white;
-            border-color: var(--maozi-color);
-        }
-
-        input[type="radio"]:checked + .radio-label.cd-btn {
-            background-color: var(--card-color);
-            color: white;
-            border-color: var(--card-color);
-        }
+        .radio-label:last-child { border-right: none; }
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .radio-label.ry-btn { background-color: var(--renyu-color); color: white; }
+        input[type="radio"]:checked + .radio-label.mz-btn { background-color: var(--maozi-color); color: white; }
+        input[type="radio"]:checked + .radio-label.cd-btn { background-color: var(--card-color); color: white; }
 
         .btn-submit {
             width: 100%;
-            background-color: var(--renyu-color); 
+            background-color: var(--renyu-color);
             color: white;
             border: none;
             padding: 14px;
@@ -244,54 +166,31 @@
             box-shadow: 0 4px 12px rgba(74, 124, 89, 0.15);
             transition: all 0.2s;
         }
+        .btn-submit:active { background-color: #3b6347; }
+        .btn-submit:disabled { background-color: var(--text-sub); cursor: not-allowed; box-shadow: none; }
 
-        .btn-submit:active {
-            background-color: #3b6347;
-        }
-
-        .btn-submit:disabled {
-            background-color: var(--text-sub);
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        /* 歷史明細 */
-        .history-list {
-            list-style: none;
-        }
-
-        .history-item {
-            display: table;
-            width: 100%;
-            padding: 14px 0;
-            border-bottom: 1px solid #edf2ee;
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .item-main {
-            display: table-cell;
-            vertical-align: middle;
-        }
-
-        .item-title {
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        .item-title.strikethrough {
-            text-decoration: line-through;
+        /* 明細分頁 */
+        .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+        .tab-btn {
+            flex: 1;
+            padding: 8px 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fff;
             color: var(--text-sub);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
         }
+        .tab-btn.active { background: var(--text-main); color: #fff; border-color: var(--text-main); }
 
-        .item-meta {
-            font-size: 11px;
-            color: var(--text-sub);
-            margin-top: 4px;
-        }
-
+        .history-list { list-style: none; }
+        .history-item { display: table; width: 100%; padding: 14px 0; border-bottom: 1px solid #edf2ee; }
+        .history-item:last-child { border-bottom: none; }
+        .item-main { display: table-cell; vertical-align: middle; }
+        .item-title { font-size: 14px; font-weight: 500; }
+        .item-title.strikethrough { text-decoration: line-through; color: var(--text-sub); }
+        .item-meta { font-size: 11px; color: var(--text-sub); margin-top: 4px; }
         .item-badge {
             display: inline-block;
             padding: 2px 6px;
@@ -301,26 +200,12 @@
             margin-right: 4px;
             font-weight: 500;
         }
-
         .item-badge.ry { background-color: var(--renyu-color); }
         .item-badge.mz { background-color: var(--maozi-color); }
         .item-badge.cd { background-color: var(--card-color); }
+        .item-right { display: table-cell; text-align: right; vertical-align: middle; width: 110px; }
+        .item-amount { font-weight: bold; font-size: 15px; color: var(--text-main); margin-bottom: 4px; }
 
-        .item-right {
-            display: table-cell;
-            text-align: right;
-            vertical-align: middle;
-            width: 110px;
-        }
-
-        .item-amount {
-            font-weight: bold;
-            font-size: 15px;
-            color: var(--text-main);
-            margin-bottom: 4px;
-        }
-        
-        /* 審核按鈕樣式 */
         .btn-audit {
             background-color: #f1f3f1;
             border: 1px solid var(--border);
@@ -332,39 +217,77 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
-        .btn-audit:hover {
-            background-color: var(--primary-light);
-            color: var(--primary);
+        .btn-audit:hover { background-color: var(--primary-light); color: var(--primary); }
+        .status-settled { color: var(--success-color); font-size: 11px; font-weight: 600; padding: 4px 0; }
+        .pay-date-text { display: block; font-size: 9px; color: #889c89; font-weight: normal; margin-top: 1px; }
+        .status-none { color: #90a4ae; font-size: 11px; font-style: italic; }
+        .loading-text { text-align: center; font-size: 13px; color: var(--text-sub); padding: 16px 0; }
+
+        /* 結算確認視窗 */
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(30, 40, 31, 0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 100;
         }
-        
-        .status-settled {
-            color: var(--success-color);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 0;
+        .modal-mask.show { display: flex; }
+        .modal {
+            background: #fff;
+            width: 100%;
+            max-width: 480px;
+            max-height: 88vh;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
-        
-        .pay-date-text {
-            display: block;
-            font-size: 9px;
-            color: #889c89;
-            font-weight: normal;
-            margin-top: 1px;
-        }
-        
-        .status-none {
-            color: #90a4ae;
-            font-size: 11px;
-            font-style: italic;
-        }
-        
-        .loading-text {
-            text-align: center;
-            font-size: 13px;
+        .modal-head { padding: 18px 20px 10px; }
+        .modal-head h3 { font-size: 16px; }
+        .modal-head p { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+        .modal-body { padding: 0 20px; overflow-y: auto; flex: 1; }
+        .month-group { margin-bottom: 12px; }
+        .month-head {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
             color: var(--text-sub);
-            padding: 16px 0;
+            background: #f4f6f4;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-bottom: 4px;
         }
+        .pick-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 4px;
+            border-bottom: 1px solid #edf2ee;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .pick-row input { width: 18px; height: 18px; flex-shrink: 0; }
+        .pick-row .pick-name { flex: 1; min-width: 0; }
+        .pick-row .pick-date { font-size: 11px; color: var(--text-sub); }
+        .pick-row .pick-amt { font-weight: 700; white-space: nowrap; }
+        .modal-foot { padding: 14px 20px 20px; border-top: 1px solid var(--border); }
+        .modal-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+        .modal-actions { display: flex; gap: 10px; }
+        .modal-actions button {
+            flex: 1;
+            padding: 13px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-cancel { background: #eef1ee; color: var(--text-sub); }
+        .btn-confirm { background: var(--renyu-color); color: #fff; }
+        .btn-confirm:disabled, .btn-cancel:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -384,12 +307,14 @@
             <div class="split-col">
                 <div class="member-name renyu">🌲 未結算補款 (仁宇)</div>
                 <div class="member-amount" id="renyuRefund">NT$ 0</div>
-                <div class="member-subnote">已扣除已撥款項</div>
+                <div class="member-subnote" id="renyuNote">含所有月份</div>
+                <button class="btn-settle ry" id="settleRyBtn" onclick="openSettleModal('ry')" disabled>一鍵撥款</button>
             </div>
             <div class="split-col">
                 <div class="member-name maozi">🍊 未結算補款 (毛子)</div>
                 <div class="member-amount" id="maoziRefund">NT$ 0</div>
-                <div class="member-subnote">已扣除已撥款項</div>
+                <div class="member-subnote" id="maoziNote">含所有月份</div>
+                <button class="btn-settle mz" id="settleMzBtn" onclick="openSettleModal('mz')" disabled>一鍵撥款</button>
             </div>
         </div>
         <div class="settlement-alert" id="settlementText">
@@ -405,7 +330,7 @@
                 <div class="radio-group">
                     <input type="radio" id="payByRenyu" name="payer" value="仁宇代墊" checked>
                     <label for="payByRenyu" class="radio-label ry-btn">🌲 仁宇代墊</label>
-                    
+
                     <input type="radio" id="payByMaozi" name="payer" value="毛子代墊">
                     <label for="payByMaozi" class="radio-label mz-btn">🍊 毛子代墊</label>
 
@@ -429,46 +354,65 @@
     </div>
 
     <div class="card">
-        <div class="card-title">最近記帳明細 (點擊核銷可立即發錢)</div>
+        <div class="card-title">記帳明細</div>
+        <div class="tabs">
+            <button class="tab-btn active" id="tabRecent" onclick="switchTab('recent')">最近 10 筆</button>
+            <button class="tab-btn" id="tabUnsettled" onclick="switchTab('unsettled')">全部待撥款 (0)</button>
+        </div>
         <ul class="history-list" id="historyList">
             <div class="loading-text" id="loadingText">正在讀取最新帳目...</div>
         </ul>
+    </div>
+
+    <!-- 一鍵撥款確認視窗 -->
+    <div class="modal-mask" id="settleModal">
+        <div class="modal">
+            <div class="modal-head">
+                <h3 id="settleTitle"></h3>
+                <p>依月份列出所有待撥款項目，可取消勾選暫不撥款的項目。</p>
+            </div>
+            <div class="modal-body" id="settleBody"></div>
+            <div class="modal-foot">
+                <div class="modal-total">
+                    <span id="settleCount">0 筆</span>
+                    <span id="settleTotal">NT$ 0</span>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-cancel" id="settleCancel" onclick="closeSettleModal()">取消</button>
+                    <button class="btn-confirm" id="settleConfirm" onclick="confirmSettle()">確認已轉帳</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwaTVZsxtJ_fUpM1Em624hvAEgvtrt0jgIjngZWPRqmKUYcnZ28McNPXA3OZoJdW64g/exec";
 
         /* =========================================================
-         * 💰 預算設定區（第四點改善）
-         * ---------------------------------------------------------
-         * 以前預算數字散在函式裡（20900 / 17500 / 16643），
-         * 現在集中在這裡。日後要調整只改這一區，不用動邏輯。
-         *
-         * DEFAULT_BUDGET  : 新制每月配額（2026/06 起生效）
-         * LEGACY_BUDGET   : 舊制每月配額（2026/05 含以前）
-         * NEW_SYSTEM_START: 新制生效的年月（含當月），格式 "YYYY-MM"
-         * OPENING_SPENT   : 特定月份的「期初已花費」校正值。
-         *                   用於處理導入系統前、帳外已花掉的金額。
-         *                   key 格式 "YYYY-M"（月份不補零）。
+         * 💰 預算設定區（原樣保留）
          * ========================================================= */
         const BUDGET_CONFIG = {
             DEFAULT_BUDGET: 20900,
             LEGACY_BUDGET: 17500,
             NEW_SYSTEM_START: "2026-06",
             OPENING_SPENT: {
-                "2026-5": 16643   // 5月導入系統前，帳外已花掉的金額
+                "2026-5": 16643
             }
         };
 
         let records = [];
+        let activeTab = 'recent';     // 'recent' | 'unsettled'
+        let isSettling = false;       // 結算進行中的鎖，避免連點
+        let settleKind = null;        // 目前結算視窗對象 'ry' | 'mz'
+
         const form = document.getElementById('expenseForm');
         const submitBtn = document.getElementById('submitBtn');
 
         document.querySelectorAll('input[name="payer"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
-                if(e.target.value === '仁宇代墊') {
+                if (e.target.value === '仁宇代墊') {
                     submitBtn.style.backgroundColor = 'var(--renyu-color)';
-                } else if(e.target.value === '毛子代墊') {
+                } else if (e.target.value === '毛子代墊') {
                     submitBtn.style.backgroundColor = 'var(--maozi-color)';
                 } else {
                     submitBtn.style.backgroundColor = 'var(--card-color)';
@@ -476,111 +420,66 @@
             });
         });
 
-        // 將 "YYYY-M" / "YYYY-MM" 轉成可比較的整數，例如 202606
-        function ymToNumber(year, month) {
-            return year * 100 + month;
-        }
+        function ymToNumber(year, month) { return year * 100 + month; }
 
-        // 智能月份配額判定（改由 BUDGET_CONFIG 讀取，不再寫死數字）
         function getBudgetForMonth(targetYear, targetMonth) {
             const [startY, startM] = BUDGET_CONFIG.NEW_SYSTEM_START.split('-').map(Number);
             const startNum = ymToNumber(startY, startM);
             const targetNum = ymToNumber(targetYear, targetMonth);
-
-            const total = (targetNum >= startNum)
-                ? BUDGET_CONFIG.DEFAULT_BUDGET
-                : BUDGET_CONFIG.LEGACY_BUDGET;
-
+            const total = (targetNum >= startNum) ? BUDGET_CONFIG.DEFAULT_BUDGET : BUDGET_CONFIG.LEGACY_BUDGET;
             const key = `${targetYear}-${targetMonth}`;
             const offset = BUDGET_CONFIG.OPENING_SPENT[key] || 0;
-
             return { total, offset, label: `${targetMonth}月基金` };
         }
 
-        // 英文月份縮寫對照表（給 JS Date.toString() 格式用）
         const MONTH_ABBR = {
             jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
             jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12
         };
 
-        /* =========================================================
-         * 📅 日期解析（第三點改善）
-         * ---------------------------------------------------------
-         * 以前只硬切 "-" 或 "/" 的前兩段，格式一不符就悄悄把整筆
-         * 資料算進「當月」，導致餘額被默默算錯。
-         *
-         * ⚠️ 你們試算表實際存的時間是這種格式：
-         *   "Sun Jul 05 2026 21:45:09 GMT+0800 (台北標準時間)"
-         * 它沒有 "-" 也沒有 "/"，月份是英文縮寫（Jul），
-         * 所以這裡特別針對它抓「英文月份縮寫」，不經時區換算最穩。
-         *
-         * 現在改為多層嘗試，並在「真的解析不出來」時回傳 null，
-         * 由呼叫端明確跳過並提示，而不是靜默污染當月數字。
-         *
-         * 支援格式範例：
-         *   Sun Jul 05 2026 21:45:09 GMT+0800 (台北標準時間)
-         *   2026-07-05 / 2026/7/5 / 2026.07.05 / 2026-07-05T10:30:00
-         *   真正的 Date 物件
-         * 回傳：{ year, month } 或 null
-         * ========================================================= */
+        // 日期解析（原樣保留）：解析不出來回傳 null
         function parseYearMonth(timeValue) {
-            // 空值直接視為無法解析
-            if (timeValue === null || timeValue === undefined || timeValue === '') {
-                return null;
-            }
+            if (timeValue === null || timeValue === undefined || timeValue === '') return null;
 
-            // 情況一：後端傳回真正的 Date 物件
             if (timeValue instanceof Date && !isNaN(timeValue.getTime())) {
                 return { year: timeValue.getFullYear(), month: timeValue.getMonth() + 1 };
             }
 
             const str = timeValue.toString().trim();
 
-            // 情況二：數字開頭的格式（ISO / 斜線 / 點），如 2026-07-05、2026/7/5
-            // 用 ^ 錨定「開頭」的 4 位年份，避免誤抓到後面時間裡的數字（如小時）
             const numMatch = str.match(/^\s*(\d{4})\D+(\d{1,2})/);
             if (numMatch) {
                 const year = parseInt(numMatch[1], 10);
                 const month = parseInt(numMatch[2], 10);
-                if (year >= 2000 && year <= 2100 && month >= 1 && month <= 12) {
-                    return { year, month };
-                }
+                if (year >= 2000 && year <= 2100 && month >= 1 && month <= 12) return { year, month };
             }
 
-            // 情況三：JS Date.toString() 格式，直接抓「英文月份縮寫 + 4 位年份」
-            // 不透過 new Date()，可避開跨月午夜的時區位移問題
             const abbrMatch = str.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/i);
             const yearMatch = str.match(/\b(19|20)\d{2}\b/);
             if (abbrMatch && yearMatch) {
                 const month = MONTH_ABBR[abbrMatch[1].toLowerCase()];
                 const year = parseInt(yearMatch[0], 10);
-                if (month && year >= 2000 && year <= 2100) {
-                    return { year, month };
-                }
+                if (month && year >= 2000 && year <= 2100) return { year, month };
             }
 
-            // 情況四：最後交給瀏覽器原生 Date 解析（處理其他標準格式）
             const d = new Date(str);
-            if (!isNaN(d.getTime())) {
-                return { year: d.getFullYear(), month: d.getMonth() + 1 };
-            }
+            if (!isNaN(d.getTime())) return { year: d.getFullYear(), month: d.getMonth() + 1 };
 
-            // 真的解析不出來
             return null;
         }
 
         function fetchCloudData() {
-            if(API_URL === "" || API_URL.includes("這裡替換成")) {
+            if (API_URL === "" || API_URL.includes("這裡替換成")) {
                 document.getElementById('settlementText').innerText = "💡 請先在程式碼中填入你的 GAS 網址喔！";
-                return;
+                return Promise.resolve();
             }
-            
-            fetch(API_URL)
+
+            return fetch(API_URL)
                 .then(response => response.json())
                 .then(data => {
                     records = data;
                     const loadingText = document.getElementById('loadingText');
-                    if(loadingText) loadingText.remove();
+                    if (loadingText) loadingText.remove();
                     updateUI();
                 })
                 .catch(error => {
@@ -588,8 +487,7 @@
                     document.getElementById('settlementText').innerText = "❌ 金庫讀取失敗，請重新整理";
                 });
         }
-        
-        // 把各種可能的付款人寫法統一成顯示名稱、徽章樣式與分類
+
         function classifyPayer(payer) {
             if (payer === '仁宇代墊' || payer === '仁宇' || payer === '老公') {
                 return { displayPayer: '仁宇代墊', badgeClass: 'ry', kind: 'ry' };
@@ -600,93 +498,107 @@
             return { displayPayer: '家庭帳戶金融卡直刷', badgeClass: 'cd', kind: 'cd' };
         }
 
-        // 取得可排序的時間戳（給明細排序用）。排序容忍度高，直接用 new Date 即可；
-        // 解析不出來的給 0，讓它排到最後，不會影響金額計算。
+        // 「待撥款」的唯一判定：必須是代墊款（非金融卡）且狀態不是已撥款
+        // 完全不看月份，這就是跨月結算的核心
+        function isUnsettledClaim(res) {
+            const { kind } = classifyPayer(res.payer);
+            return (kind === 'ry' || kind === 'mz') && res.status !== '已撥款';
+        }
+
         function getSortableTime(res) {
             if (!res || !res.time) return 0;
             const t = new Date(res.time).getTime();
             return isNaN(t) ? 0 : t;
         }
 
-        // 把冗長的時間字串縮短成清爽格式：當年 → "07/05"；跨年 → "2025/12/31"
-        // 若真的解析不出來，就退回顯示原字串，不弄丟資訊。
         function formatDisplayDate(timeValue) {
             if (!timeValue) return '';
             const d = new Date(timeValue);
             if (isNaN(d.getTime())) return timeValue.toString();
             const mm = String(d.getMonth() + 1).padStart(2, '0');
             const dd = String(d.getDate()).padStart(2, '0');
-            const yearPrefix = d.getFullYear() !== new Date().getFullYear()
-                ? `${d.getFullYear()}/` : '';
+            const yearPrefix = d.getFullYear() !== new Date().getFullYear() ? `${d.getFullYear()}/` : '';
             return `${yearPrefix}${mm}/${dd}`;
         }
 
-        // HTML 跳脫：使用者輸入的品項等文字塞進畫面前先處理，避免 XSS
+        // 月份標籤，例如 "2026/10"；解析失敗回傳 "日期未知"
+        function monthLabel(res) {
+            const ym = parseYearMonth(res.time);
+            return ym ? `${ym.year}/${String(ym.month).padStart(2, '0')}` : '日期未知';
+        }
+
         function escapeHtml(str) {
             return String(str == null ? '' : str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            document.getElementById('tabRecent').classList.toggle('active', tab === 'recent');
+            document.getElementById('tabUnsettled').classList.toggle('active', tab === 'unsettled');
+            updateUI();
         }
 
         function updateUI() {
             const now = new Date();
             const currentYear = now.getFullYear();
-            const currentMonth = now.getMonth() + 1; // 2026年7月
+            const currentMonth = now.getMonth() + 1;
 
             const budgetInfo = getBudgetForMonth(currentYear, currentMonth);
-            
-            let totalSpent = budgetInfo.offset;   
-            let ryUnpaid = 0;     
-            let mzUnpaid = 0;     
 
-            // 收集「日期無法辨識」的資料，稍後提示使用者（不再靜默算進當月）
+            let totalSpent = budgetInfo.offset;
+            let ryUnpaid = 0, mzUnpaid = 0;
+            let ryCount = 0, mzCount = 0;
             const unparsedRecords = [];
 
             /* ---------------------------------------------------------
-             * 第一部分：金額計算（只算「當月」）
-             * 家庭基金餘額、未結算補款維持原本的當月邏輯，不受明細顯示影響。
+             * 第一部分：未結算補款 —— 跨月，不看月份，只看狀態
+             * （修正：以前只算當月，上月沒撥的錢會從畫面消失）
+             * --------------------------------------------------------- */
+            records.forEach(res => {
+                if (!isUnsettledClaim(res)) return;
+                const { kind } = classifyPayer(res.payer);
+                if (kind === 'ry') { ryUnpaid += res.amount; ryCount++; }
+                if (kind === 'mz') { mzUnpaid += res.amount; mzCount++; }
+            });
+
+            /* ---------------------------------------------------------
+             * 第二部分：本月花費（基金餘額仍依「消費發生月份」計算）
              * --------------------------------------------------------- */
             records.forEach(res => {
                 const ym = parseYearMonth(res.time);
-
-                // 🛑 解析失敗：明確跳過並記錄，避免壞資料混進本月花費
                 if (!ym) {
                     unparsedRecords.push(res);
                     console.warn("日期無法辨識，已略過此筆：", res);
                     return;
                 }
-
-                // 只計算當月的資料
-                if (ym.year !== currentYear || ym.month !== currentMonth) {
-                    return;
-                }
-
+                if (ym.year !== currentYear || ym.month !== currentMonth) return;
                 totalSpent += res.amount;
-
-                const isSettled = res.status === '已撥款';
-                const { kind } = classifyPayer(res.payer);
-                if (kind === 'ry' && !isSettled) ryUnpaid += res.amount;
-                if (kind === 'mz' && !isSettled) mzUnpaid += res.amount;
             });
 
             /* ---------------------------------------------------------
-             * 第二部分：明細顯示（最近 10 筆，不分月份、不論是否撥款）
-             * 依時間新到舊排序後取前 10 筆。
+             * 第三部分：明細列表（兩種視圖）
              * --------------------------------------------------------- */
+            const unsettledAll = records.filter(isUnsettledClaim);
+            document.getElementById('tabUnsettled').innerText = `全部待撥款 (${unsettledAll.length})`;
+
             const listElement = document.getElementById('historyList');
             listElement.innerHTML = '';
 
-            const recentRecords = [...records]
-                .sort((a, b) => getSortableTime(b) - getSortableTime(a))
-                .slice(0, 10);
-
-            if (recentRecords.length === 0) {
-                listElement.innerHTML = `<div class="loading-text">還沒有任何記帳，來記第一筆吧！</div>`;
+            let shown;
+            if (activeTab === 'unsettled') {
+                shown = [...unsettledAll].sort((a, b) => getSortableTime(b) - getSortableTime(a));
             } else {
-                recentRecords.forEach(res => {
+                shown = [...records].sort((a, b) => getSortableTime(b) - getSortableTime(a)).slice(0, 10);
+            }
+
+            if (shown.length === 0) {
+                listElement.innerHTML = activeTab === 'unsettled'
+                    ? `<div class="loading-text">🎉 目前沒有待撥款項目</div>`
+                    : `<div class="loading-text">還沒有任何記帳，來記第一筆吧！</div>`;
+            } else {
+                shown.forEach(res => {
                     const isSettled = res.status === '已撥款';
                     const { displayPayer, badgeClass } = classifyPayer(res.payer);
 
@@ -713,7 +625,7 @@
                             </div>
                         </div>
                         <div class="item-right">
-                            <div class="item-amount">NT$ ${res.amount.toLocaleString()}</div>
+                            <div class="item-amount">NT$ ${Number(res.amount).toLocaleString()}</div>
                             <div class="audit-zone">${auditHtml}</div>
                         </div>
                     `;
@@ -721,19 +633,24 @@
                 });
             }
 
+            /* ---------------------------------------------------------
+             * 第四部分：儀表板數字與按鈕狀態
+             * --------------------------------------------------------- */
             const remainingBalance = budgetInfo.total - totalSpent;
-
             document.getElementById('fundBalance').innerText = remainingBalance.toLocaleString();
 
-            // 「本月已花了」；若有無法辨識日期的資料，附上提示讓問題浮現
             let infoText = `${currentMonth}月已花了: NT$ ${totalSpent.toLocaleString()}`;
             if (unparsedRecords.length > 0) {
                 infoText += ` ⚠️ 有 ${unparsedRecords.length} 筆日期無法辨識(已略過)`;
             }
             document.getElementById('fundInfoText').innerText = infoText;
-            
+
             document.getElementById('renyuRefund').innerText = 'NT$ ' + ryUnpaid.toLocaleString();
             document.getElementById('maoziRefund').innerText = 'NT$ ' + mzUnpaid.toLocaleString();
+            document.getElementById('renyuNote').innerText = ryCount ? `共 ${ryCount} 筆・含所有月份` : '已全數撥款';
+            document.getElementById('maoziNote').innerText = mzCount ? `共 ${mzCount} 筆・含所有月份` : '已全數撥款';
+            document.getElementById('settleRyBtn').disabled = ryCount === 0 || isSettling;
+            document.getElementById('settleMzBtn').disabled = mzCount === 0 || isSettling;
 
             const settlementAlert = document.getElementById('settlementText');
             if (remainingBalance < 0) {
@@ -749,50 +666,181 @@
             }
         }
 
-        function auditRow(rowId, buttonElement) {
-            if(!confirm("確定已將這筆代墊款撥款給對方了嗎？\n確認後將自動紀錄今日撥款日期。")) return;
-            
-            buttonElement.disabled = true;
-            buttonElement.innerText = "同步中...";
-            
-            fetch(API_URL, {
+        /* =========================================================
+         * 🔁 後端呼叫：標記單筆已撥款（沿用原有 updateStatus，後端不用改）
+         * ========================================================= */
+        function postUpdateStatus(rowId) {
+            return fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({
-                    action: "updateStatus",
-                    rowId: rowId
-                })
-            })
-            .then(res => res.json())
-            .then(result => {
-                if(result.result === "success") {
-                    const recordIndex = records.findIndex(r => r.rowId === rowId);
-                    if(recordIndex !== -1) {
-                        records[recordIndex].status = "已撥款";
-                        records[recordIndex].payDate = result.payDate;
-                    }
-                    updateUI();
-                } else {
-                    alert("核銷失敗，請重試！");
-                    buttonElement.disabled = false;
-                    buttonElement.innerText = "⚙ 點擊撥款";
-                }
-            })
-            .catch(err => {
-                console.error("同步失敗:", err);
-                alert("網路異常");
-                buttonElement.disabled = false;
-                buttonElement.innerText = "⚙ 點擊撥款";
-            });
+                body: JSON.stringify({ action: "updateStatus", rowId: rowId })
+            }).then(res => res.json());
         }
 
-        form.addEventListener('submit', function(e) {
+        // 單筆撥款（維持原功能）
+        function auditRow(rowId, buttonElement) {
+            if (isSettling) return;
+            if (!confirm("確定已將這筆代墊款撥款給對方了嗎？\n確認後將自動紀錄今日撥款日期。")) return;
+
+            buttonElement.disabled = true;
+            buttonElement.innerText = "同步中...";
+
+            postUpdateStatus(rowId)
+                .then(result => {
+                    if (result.result === "success") {
+                        const recordIndex = records.findIndex(r => Number(r.rowId) === Number(rowId));
+                        if (recordIndex !== -1) {
+                            records[recordIndex].status = "已撥款";
+                            records[recordIndex].payDate = result.payDate;
+                        }
+                        updateUI();
+                    } else {
+                        alert("核銷失敗，請重試！");
+                        buttonElement.disabled = false;
+                        buttonElement.innerText = "⚙ 點擊撥款";
+                    }
+                })
+                .catch(err => {
+                    console.error("同步失敗:", err);
+                    alert("網路異常");
+                    buttonElement.disabled = false;
+                    buttonElement.innerText = "⚙ 點擊撥款";
+                });
+        }
+
+        /* =========================================================
+         * 🧾 一鍵撥款（跨月）
+         * ---------------------------------------------------------
+         * 設計重點：
+         *  1. 以「人」為單位，撈出該人所有未撥款項目，不分月份。
+         *  2. 確認視窗依月份分組列出，每筆可取消勾選。
+         *  3. 送出的是「勾選的 rowId 清單」，不是「全部未撥款」，
+         *     所以按下前一刻別人新增的項目不會被誤核銷。
+         *  4. 送出前先重新抓一次最新資料，剔除已被別人撥款的項目，
+         *     避免兩個人同時操作造成重複撥款。
+         *  5. 逐筆送出（沿用既有 updateStatus），失敗就停下並回報進度。
+         * ========================================================= */
+        function openSettleModal(kind) {
+            if (isSettling) return;
+            settleKind = kind;
+
+            const items = records
+                .filter(r => isUnsettledClaim(r) && classifyPayer(r.payer).kind === kind)
+                .sort((a, b) => getSortableTime(a) - getSortableTime(b));
+            if (items.length === 0) return;
+
+            const name = kind === 'ry' ? '🌲 仁宇' : '🍊 毛子';
+            document.getElementById('settleTitle').innerText = `一鍵撥款給 ${name}`;
+
+            // 依月份分組（保持時間順序）
+            const groups = new Map();
+            items.forEach(r => {
+                const label = monthLabel(r);
+                if (!groups.has(label)) groups.set(label, []);
+                groups.get(label).push(r);
+            });
+
+            let html = '';
+            groups.forEach((rows, label) => {
+                html += `<div class="month-group" data-month="${escapeHtml(label)}">
+                    <div class="month-head"><span>${escapeHtml(label)}</span><span class="month-sub"></span></div>`;
+                rows.forEach(r => {
+                    html += `<label class="pick-row">
+                        <input type="checkbox" checked data-row-id="${Number(r.rowId)}" data-amount="${Number(r.amount)}" onchange="recalcSettle()">
+                        <span class="pick-name">${escapeHtml(r.purpose)}<br><span class="pick-date">${escapeHtml(formatDisplayDate(r.time))}</span></span>
+                        <span class="pick-amt">NT$ ${Number(r.amount).toLocaleString()}</span>
+                    </label>`;
+                });
+                html += `</div>`;
+            });
+            document.getElementById('settleBody').innerHTML = html;
+
+            recalcSettle();
+            document.getElementById('settleModal').classList.add('show');
+        }
+
+        function closeSettleModal() {
+            if (isSettling) return;
+            document.getElementById('settleModal').classList.remove('show');
+        }
+
+        // 重新計算各月小計與總額
+        function recalcSettle() {
+            let total = 0, count = 0;
+            document.querySelectorAll('#settleBody .month-group').forEach(group => {
+                let sub = 0, n = 0;
+                group.querySelectorAll('input[type=checkbox]').forEach(cb => {
+                    if (cb.checked) { sub += Number(cb.dataset.amount); n++; }
+                });
+                group.querySelector('.month-sub').innerText = `${n} 筆 · NT$ ${sub.toLocaleString()}`;
+                total += sub; count += n;
+            });
+            document.getElementById('settleCount').innerText = `共 ${count} 筆`;
+            document.getElementById('settleTotal').innerText = `NT$ ${total.toLocaleString()}`;
+            document.getElementById('settleConfirm').disabled = count === 0;
+        }
+
+        async function confirmSettle() {
+            if (isSettling) return;
+
+            const selected = Array.from(document.querySelectorAll('#settleBody input[type=checkbox]:checked'))
+                .map(cb => Number(cb.dataset.rowId));
+            if (selected.length === 0) return;
+
+            const totalText = document.getElementById('settleTotal').innerText;
+            if (!confirm(`確認已轉帳 ${totalText}（${selected.length} 筆）？\n按下後將依序標記為已撥款並記錄今日日期。`)) return;
+
+            isSettling = true;
+            const confirmBtn = document.getElementById('settleConfirm');
+            const cancelBtn = document.getElementById('settleCancel');
+            confirmBtn.disabled = true;
+            cancelBtn.disabled = true;
+            confirmBtn.innerText = "確認最新資料...";
+            document.getElementById('settleRyBtn').disabled = true;
+            document.getElementById('settleMzBtn').disabled = true;
+
+            let done = 0;
+            let skipped = 0;
+            let failedAt = null;
+
+            try {
+                // 先抓最新資料，剔除已被別人撥款的項目
+                const fresh = await fetch(API_URL).then(r => r.json());
+                const stillOpen = new Set(fresh.filter(isUnsettledClaim).map(r => Number(r.rowId)));
+                const ids = selected.filter(id => stillOpen.has(id));
+                skipped = selected.length - ids.length;
+
+                for (let i = 0; i < ids.length; i++) {
+                    confirmBtn.innerText = `同步中 ${i + 1} / ${ids.length}`;
+                    const result = await postUpdateStatus(ids[i]);
+                    if (result.result !== "success") { failedAt = i; break; }
+                    done++;
+                }
+
+                if (failedAt !== null) {
+                    alert(`撥款中斷：已完成 ${done} 筆，第 ${done + 1} 筆失敗。\n已完成的不會重複，請重新點擊一鍵撥款處理剩餘項目。`);
+                } else if (skipped > 0) {
+                    alert(`已完成 ${done} 筆。\n另有 ${skipped} 筆剛剛已被其他人撥款，已自動略過。`);
+                }
+            } catch (err) {
+                console.error("一鍵撥款失敗:", err);
+                alert(`網路異常：已完成 ${done} 筆。\n請重新整理確認狀態後再試。`);
+            } finally {
+                isSettling = false;
+                confirmBtn.innerText = "確認已轉帳";
+                cancelBtn.disabled = false;
+                document.getElementById('settleModal').classList.remove('show');
+                await fetchCloudData();   // 重新讀取，以後端實際狀態為準
+            }
+        }
+
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const payer = document.querySelector('input[name="payer"]:checked').value;
             const amount = parseInt(document.getElementById('amount').value, 10);
             const purpose = document.getElementById('purpose').value;
 
-            if(!amount || !purpose) return;
+            if (!amount || !purpose) return;
 
             submitBtn.disabled = true;
             submitBtn.innerText = "正在同步至金庫...";
@@ -805,7 +853,7 @@
             })
             .then(res => res.json())
             .then(result => {
-                if(result.result === "success") {
+                if (result.result === "success") {
                     fetchCloudData();
                     document.getElementById('amount').value = '';
                     document.getElementById('purpose').value = '';
